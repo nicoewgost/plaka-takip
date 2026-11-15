@@ -3,110 +3,165 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>İnşaat Güvenlik - Plaka ve Kamera Takip</title>
+    <title>Araç Kayıt Defteri Sistemi</title>
     <style>
-        body { font-family: Arial, sans-serif; background: #f4f6f9; margin: 0; padding: 15px; color: #333; }
-        .container { max-width: 500px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        h2 { text-align: center; color: #2c3e50; margin-bottom: 20px; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; font-weight: bold; margin-bottom: 5px; }
-        input, select { width: 100%; padding: 12px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; }
-        button { width: 100%; padding: 14px; background: #27ae60; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        button:hover { background: #219653; }
-        .btn-kamera { background: #2980b9; margin-bottom: 10px; }
-        .btn-kamera:hover { background: #2471a3; }
-        #onizleme { width: 100%; max-height: 250px; object-fit: cover; border-radius: 6px; margin-top: 10px; display: none; }
-        .log-item { background: #f8f9fa; border-left: 5px solid #27ae60; padding: 10px; margin-top: 10px; border-radius: 4px; font-size: 14px; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 15px; }
+        .container { max-width: 600px; margin: 0 auto; background: #1e293b; padding: 20px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        h2 { text-align: center; color: #38bdf8; margin-bottom: 5px; }
+        .subtitle { text-align: center; font-size: 13px; color: #94a3b8; margin-bottom: 20px; }
+        
+        .section-title { font-size: 15px; font-weight: bold; color: #38bdf8; margin-top: 20px; margin-bottom: 10px; border-left: 4px solid #38bdf8; padding-left: 8px; }
+        
+        .photo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 15px; }
+        .photo-box { background: #0f172a; border: 2px dashed #475569; border-radius: 8px; text-align: center; padding: 10px; position: relative; min-height: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; }
+        .photo-box img { width: 100%; height: 70px; object-fit: cover; border-radius: 4px; display: none; position: absolute; top: 0; left: 0; }
+        .photo-box span { font-size: 11px; color: #cbd5e1; margin-top: 5px; }
+        
+        .form-group { margin-bottom: 12px; }
+        label { display: block; font-size: 13px; font-weight: bold; margin-bottom: 4px; color: #cbd5e1; }
+        input, select, textarea { width: 100%; padding: 10px; box-sizing: border-box; background: #0f172a; border: 1px solid #475569; color: #fff; border-radius: 8px; font-size: 14px; }
+        
+        .btn-action { width: 100%; padding: 14px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 15px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-giris { background: #16a34a; color: white; }
+        .btn-giris:hover { background: #15803d; }
+        .btn-cikis { background: #dc2626; color: white; }
+        .btn-cikis:hover { background: #b91c1c; }
+
+        .log-container { margin-top: 30px; background: #0f172a; padding: 15px; border-radius: 12px; }
+        .log-item { background: #1e293b; border-left: 4px solid #16a34a; padding: 12px; margin-top: 10px; border-radius: 6px; font-size: 13px; }
+        .log-item.cikis { border-left-color: #dc2626; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>Giriş Kapısı Takip</h2>
-    
-    <div class="form-group">
-        <label>Araç Plakası:</label>
-        <input type="text" id="plaka" placeholder="Örn: 34ABC123" style="text-transform: uppercase;">
+    <h2>ARAÇ KAYIT DEFTERİ SİSTEMİ</h2>
+    <div class="subtitle">Mobil ve Masaüstü Uyumlu - Senkronize Çalışma</div>
+
+    <!-- 1. FOTOĞRAFLAR -->
+    <div class="section-title">1. Araç Fotoğrafları</div>
+    <div class="photo-grid">
+        <div class="photo-box" onclick="kameraAc('on')">
+            <input type="file" id="camOn" accept="image/*" capture="environment" style="display:none" onchange="fotoYukle(event, 'on')">
+            <img id="imgOn">
+            <span id="txtOn">📷 Ön Fotoğraf</span>
+        </div>
+        <div class="photo-box" onclick="kameraAc('ic')">
+            <input type="file" id="camIc" accept="image/*" capture="environment" style="display:none" onchange="fotoYukle(event, 'ic')">
+            <img id="imgIc">
+            <span id="txtIc">📷 İç Fotoğraf</span>
+        </div>
+        <div class="photo-box" onclick="kameraAc('bagaj')">
+            <input type="file" id="camBagaj" accept="image/*" capture="environment" style="display:none" onchange="fotoYukle(event, 'bagaj')">
+            <img id="imgBagaj">
+            <span id="txtBagaj">📷 Bagaj Fotoğrafı</span>
+        </div>
     </div>
 
+    <!-- 2. PLAKA -->
+    <div class="section-title">2. Plaka Tanıma</div>
     <div class="form-group">
-        <label>İşlem Türü:</label>
-        <select id="islemTuru">
-            <option value="Giriş">Giriş Yapıyor</option>
-            <option value="Çıkış">Çıkış Yapıyor</option>
-        </select>
+        <label>Araç Plakası</label>
+        <input type="text" id="plaka" placeholder="Örn: 34 ABC 123" style="text-transform: uppercase; font-weight: bold; font-size: 16px;">
     </div>
 
+    <!-- 3. BİLGİLER -->
+    <div class="section-title">3. Araç ve Kişi Bilgileri</div>
     <div class="form-group">
-        <label>Şoför / Firma / Açıklama:</label>
-        <input type="text" id="aciklama" placeholder="Firma adı veya malzeme...">
+        <label>Ad Soyad</label>
+        <input type="text" id="adSoyad" placeholder="Şoför adı soyadı...">
+    </div>
+    <div class="form-group">
+        <label>Firma</label>
+        <input type="text" id="firma" placeholder="Firma adı...">
+    </div>
+    <div class="form-group">
+        <label>Ek Not / Açıklama</label>
+        <input type="text" id="ekNot" placeholder="Malzeme teslimi vb...">
     </div>
 
-    <div class="form-group">
-        <label>Araç Fotoğrafı:</label>
-        <!-- Gizli kamera inputu -->
-        <input type="file" id="kameraInput" accept="image/*" capture="environment" style="display:none;" onchange="fotografSecildi(event)">
-        <button type="button" class="btn-kamera" onclick="document.getElementById('kameraInput').click()">📸 Kamerayı Aç / Fotoğraf Çek</button>
-        <img id="onizleme" alt="Araç Fotoğrafı">
+    <!-- BUTONLAR -->
+    <button class="btn-action btn-giris" onclick="kaydet('Giriş')">
+        🟢 ARAÇ GİRİŞ KAYDI OLUŞTUR
+    </button>
+    <button class="btn-action btn-cikis" onclick="kaydet('Çıkış')">
+        🔴 ARAÇ ÇIKIŞ KAYDI OLUŞTUR
+    </button>
+
+    <!-- KAYITLAR LİSTESİ -->
+    <div class="log-container">
+        <h3 style="margin-top:0; font-size:15px; color:#38bdf8;">Son Kayıtlar</h3>
+        <div id="kayitlarListesi">Henüz kayıt bulunmuyor.</div>
     </div>
-
-    <button onclick="kaydetVePaylas()">Kaydet ve WhatsApp'a Gönder</button>
-</div>
-
-<div class="container" style="margin-top: 20px;">
-    <h3>Bugünkü Kayıtlar</h3>
-    <div id="kayitlarListesi">Henüz kayıt yok.</div>
 </div>
 
 <script>
-    let secilenFotoDataUrl = "";
+    let fotolar = { on: "", ic: "", bagaj: "" };
 
-    function fotografSecildi(event) {
+    function kameraAc(tur) {
+        document.getElementById('cam' + tur.charAt(0).toUpperCase() + tur.slice(1)).click();
+    }
+
+    function fotoYukle(event, tur) {
         const file = event.target.files[0];
         if (file) {
             const reader = new FileReader();
             reader.onload = function(e) {
-                secilenFotoDataUrl = e.target.result;
-                const img = document.getElementById('onizleme');
-                img.src = secilenFotoDataUrl;
+                fotolar[tur] = e.target.result;
+                const img = document.getElementById('img' + tur.charAt(0).toUpperCase() + tur.slice(1));
+                img.src = e.target.result;
                 img.style.display = 'block';
+                document.getElementById('txt' + tur.charAt(0).toUpperCase() + tur.slice(1)).style.display = 'none';
             }
             reader.readAsDataURL(file);
         }
     }
 
-    function kaydetVePaylas() {
+    function kaydet(islemTuru) {
         const plaka = document.getElementById('plaka').value.trim().toUpperCase();
-        const islemTuru = document.getElementById('islemTuru').value;
-        const aciklama = document.getElementById('aciklama').value.trim();
-        const zaman = new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+        const adSoyad = document.getElementById('adSoyad').value.trim();
+        const firma = document.getElementById('firma').value.trim();
+        const ekNot = document.getElementById('ekNot').value.trim();
+        const zaman = new Date().toLocaleString('tr-TR');
 
-        if(!plaka) {
+        if (!plaka) {
             alert('Lütfen araç plakasını giriniz!');
             return;
         }
 
-        const kayitMetni = 🚗 *Giriş Kapısı Bildirimi* \n⏰ Saat: ${zaman}\n🔢 Plaka: *${plaka}*\n📌 Durum: *${islemTuru}*\n📝 Detay: ${aciklama || 'Belirtilmedi'};
+        const metin = 🚗 *ARAÇ ${islemTuru.toUpperCase()} YAPTI*\n +
+                      ──────────────────\n +
+                      🔢 *Plaka:* ${plaka}\n +
+                      👤 *Ad Soyad:* ${adSoyad || 'Belirtilmedi'}\n +
+                      🏢 *Firma:* ${firma || 'Belirtilmedi'}\n +
+                      🕒 *Tarih/Saat:* ${zaman}\n +
+                      📝 *Ek Not:* ${ekNot || 'Yok'}\n +
+                      ──────────────────;
 
         // Listeye ekle
         const liste = document.getElementById('kayitlarListesi');
-        if(liste.innerHTML === 'Henüz kayıt yok.') liste.innerHTML = '';
-        
-        const yeniKayitDiv = document.createElement('div');
-        yeniKayitDiv.className = 'log-item';
-        yeniKayitDiv.innerHTML = ${zaman} - <b>${plaka}</b> (${islemTuru}) - ${aciklama || '-'};
-        liste.prepend(yeniKayitDiv);
+        if (liste.innerHTML.includes('Henüz kayıt')) liste.innerHTML = '';
 
-        // WhatsApp'a Yönlendir
-        const waUrl = https://api.whatsapp.com/send?text=${encodeURIComponent(kayitMetni)};
+        const div = document.createElement('div');
+        div.className = log-item ${islemTuru === 'Çıkış' ? 'cikis' : ''};
+        div.innerHTML = <b>${zaman}</b> - <b>${plaka}</b> (${islemTuru})<br>Şoför: ${adSoyad || '-'} | Firma: ${firma || '-'}<br>Not: ${ekNot || '-'};
+        liste.prepend(div);
+
+        // WhatsApp'a Gönder
+        const waUrl = https://api.whatsapp.com/send?text=${encodeURIComponent(metin)};
         window.open(waUrl, '_blank');
 
         // Formu temizle
         document.getElementById('plaka').value = '';
-        document.getElementById('aciklama').value = '';
-        document.getElementById('onizleme.style.display') = 'none';
-        document.getElementById('onizleme').src = '';
-        secilenFotoDataUrl = "";
+        document.getElementById('adSoyad').value = '';
+        document.getElementById('firma').value = '';
+        document.getElementById('ekNot').value = '';
+        // Fotoları sıfırla
+        ['on', 'ic', 'bagaj'].forEach(t => {
+            fotolar[t] = "";
+            document.getElementById('img' + t.charAt(0).toUpperCase() + t.slice(1)).style.display = 'none';
+            document.getElementById('txt' + t.charAt(0).toUpperCase() + t.slice(1)).style.display = 'block';
+        });
     }
 </script>
 
