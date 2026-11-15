@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>İnşaat Güvenlik - Plaka Takip</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f6f9; margin: 0; padding: 15px; color: #333; }
+        .container { max-width: 500px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: #2c3e50; margin-bottom: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; }
+        input, select { width: 100%; padding: 12px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; }
+        button { width: 100%; padding: 14px; background: #27ae60; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        button:hover { background: #219653; }
+        .btn-wa { background: #25D366; margin-top: 5px; }
+        .btn-wa:hover { background: #1EBE5D; }
+        .log-item { background: #f8f9fa; border-left: 5px solid #27ae60; padding: 10px; margin-top: 10px; border-radius: 4px; font-size: 14px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Giriş Kapısı Takip</h2>
+    
+    <div class="form-group">
+        <label>Araç Plakası:</label>
+        <input type="text" id="plaka" placeholder="Örn: 34ABC123" style="text-transform: uppercase;">
+    </div>
+
+    <div class="form-group">
+        <label>İşlem Türü:</label>
+        <select id="islemTuru">
+            <option value="Giriş">Giriş Yapıyor</option>
+            <option value="Çıkış">Çıkış Yapıyor</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>Şoför / Firma / Açıklama:</label>
+        <input type="text" id="aciklama" placeholder="Firma adı veya malzeme...">
+    </div>
+
+    <button onclick="kaydetVePaylas()">Kaydet ve WhatsApp'a Gönder</button>
+</div>
+
+<div class="container" style="margin-top: 20px;">
+    <h3>Bugünkü Kayıtlar</h3>
+    <div id="kayitlarListesi">Henüz kayıt yok.</div>
+</div>
+
+<script>
+    function kaydetVePaylas() {
+        const plaka = document.getElementById('plaka').value.trim().toUpperCase();
+        const islemTuru = document.getElementById('islemTuru').value;
+        const aciklama = document.getElementById('aciklama').value.trim();
+        const zaman = new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+
+        if(!plaka) {
+            alert('Lütfen araç plakasını giriniz!');
+            return;
+        }
+
+        const kayitMetni = ${zaman} - Plaka: *${plaka}* | Durum: *${islemTuru}* | Detay: ${aciklama || 'Belirtilmedi'};
+
+        // Listeye ekle
+        const liste = document.getElementById('kayitlarListesi');
+        if(liste.innerHTML === 'Henüz kayıt yok.') liste.innerHTML = '';
+        
+        const yeniKayitDiv = document.createElement('div');
+        yeniKayitDiv.className = 'log-item';
+        yeniKayitDiv.innerHTML = kayitMetni;
+        liste.prepend(yeniKayitDiv);
+
+        // WhatsApp'a Yönlendir
+        const waUrl = https://api.whatsapp.com/send?text=${encodeURIComponent("Giriş Kapısı Bildirimi:\n" + kayitMetni)};
+        window.open(waUrl, '_blank');
+
+        // Formu temizle
+        document.getElementById('plaka').value = '';
+        document.getElementById('aciklama').value = '';
+    }
+</script>
+
+</body>
+</html>
