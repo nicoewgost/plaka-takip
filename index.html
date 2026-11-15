@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>İnşaat Güvenlik - Plaka Takip</title>
+    <title>İnşaat Güvenlik - Plaka ve Kamera Takip</title>
     <style>
         body { font-family: Arial, sans-serif; background: #f4f6f9; margin: 0; padding: 15px; color: #333; }
         .container { max-width: 500px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
@@ -13,8 +13,9 @@
         input, select { width: 100%; padding: 12px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; }
         button { width: 100%; padding: 14px; background: #27ae60; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; }
         button:hover { background: #219653; }
-        .btn-wa { background: #25D366; margin-top: 5px; }
-        .btn-wa:hover { background: #1EBE5D; }
+        .btn-kamera { background: #2980b9; margin-bottom: 10px; }
+        .btn-kamera:hover { background: #2471a3; }
+        #onizleme { width: 100%; max-height: 250px; object-fit: cover; border-radius: 6px; margin-top: 10px; display: none; }
         .log-item { background: #f8f9fa; border-left: 5px solid #27ae60; padding: 10px; margin-top: 10px; border-radius: 4px; font-size: 14px; }
     </style>
 </head>
@@ -41,6 +42,14 @@
         <input type="text" id="aciklama" placeholder="Firma adı veya malzeme...">
     </div>
 
+    <div class="form-group">
+        <label>Araç Fotoğrafı:</label>
+        <!-- Gizli kamera inputu -->
+        <input type="file" id="kameraInput" accept="image/*" capture="environment" style="display:none;" onchange="fotografSecildi(event)">
+        <button type="button" class="btn-kamera" onclick="document.getElementById('kameraInput').click()">📸 Kamerayı Aç / Fotoğraf Çek</button>
+        <img id="onizleme" alt="Araç Fotoğrafı">
+    </div>
+
     <button onclick="kaydetVePaylas()">Kaydet ve WhatsApp'a Gönder</button>
 </div>
 
@@ -50,6 +59,22 @@
 </div>
 
 <script>
+    let secilenFotoDataUrl = "";
+
+    function fotografSecildi(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                secilenFotoDataUrl = e.target.result;
+                const img = document.getElementById('onizleme');
+                img.src = secilenFotoDataUrl;
+                img.style.display = 'block';
+            }
+            reader.readAsDataURL(file);
+        }
+    }
+
     function kaydetVePaylas() {
         const plaka = document.getElementById('plaka').value.trim().toUpperCase();
         const islemTuru = document.getElementById('islemTuru').value;
@@ -61,7 +86,7 @@
             return;
         }
 
-        const kayitMetni = ${zaman} - Plaka: *${plaka}* | Durum: *${islemTuru}* | Detay: ${aciklama || 'Belirtilmedi'};
+        const kayitMetni = 🚗 *Giriş Kapısı Bildirimi* \n⏰ Saat: ${zaman}\n🔢 Plaka: *${plaka}*\n📌 Durum: *${islemTuru}*\n📝 Detay: ${aciklama || 'Belirtilmedi'};
 
         // Listeye ekle
         const liste = document.getElementById('kayitlarListesi');
@@ -69,16 +94,19 @@
         
         const yeniKayitDiv = document.createElement('div');
         yeniKayitDiv.className = 'log-item';
-        yeniKayitDiv.innerHTML = kayitMetni;
+        yeniKayitDiv.innerHTML = ${zaman} - <b>${plaka}</b> (${islemTuru}) - ${aciklama || '-'};
         liste.prepend(yeniKayitDiv);
 
         // WhatsApp'a Yönlendir
-        const waUrl = https://api.whatsapp.com/send?text=${encodeURIComponent("Giriş Kapısı Bildirimi:\n" + kayitMetni)};
+        const waUrl = https://api.whatsapp.com/send?text=${encodeURIComponent(kayitMetni)};
         window.open(waUrl, '_blank');
 
         // Formu temizle
         document.getElementById('plaka').value = '';
         document.getElementById('aciklama').value = '';
+        document.getElementById('onizleme.style.display') = 'none';
+        document.getElementById('onizleme').src = '';
+        secilenFotoDataUrl = "";
     }
 </script>
 
